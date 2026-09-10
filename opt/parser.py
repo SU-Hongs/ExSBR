@@ -16,7 +16,6 @@ def parse_args():
                         help='options: 10, 20')
     parser.add_argument('--dataset', 
                         type=str,
-                        default='Movies',
                         help='use which datset: bundle/games/ml-1m')
     parser.add_argument('--train_num', 
                         type=int,
@@ -27,12 +26,12 @@ def parse_args():
                         default=32,
                         help='options: 16,32')
     parser.add_argument('--backend', type=str, 
-                        default='local', 
+                        default='openai', 
                         help='run with local HF model or OpenAI API')
     parser.add_argument('--bs', type=int, default=4, help='generation batch-size for local backend')
     parser.add_argument('--max_new_tokens',
                         type=int,
-                        default=18000,
+                        default=2000,
                         help='maximum number of tokens to generate per call')
     
 
