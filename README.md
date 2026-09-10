@@ -21,7 +21,7 @@ Run ```python refine.py``` to perform prompt refinement and obtain the refined p
 
 ### Testing
 
-Run ```test.py``` to evaluate ExSBR on the test sessions.
+Run ```python test.py``` to evaluate ExSBR on the test sessions.
 
 ### Evaluation
 
