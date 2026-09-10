@@ -69,12 +69,6 @@ class Request:
 
                 )
                 
-                # Check if response contains choices and message
-                response_msg = response.choices[0].message.content
-                # if response and "choices" in response and len(response.choices) > 0:
-                #     response_msg = response.choices[0].message.content
-                # else:
-                #     response_msg = None
 
                 
                 if response_msg is None or len(response_msg) == 0:
