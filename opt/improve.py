@@ -32,17 +32,6 @@ class Improve():
         self.request = request_model
         self.used_data = []
     
-    # def evaluate_collect_error(self, prompt, data):
-    #     errors_list = []
-    #     for val in data:
-    #         response = self.request.request(val['input'], prompt)
-    #         if not detect_error(response, val['target']):
-    #             error = {}
-    #             error['input'] = val['input']
-    #             error['output'] = response
-    #             errors_list.append(error)
-    
-    #     return errors_list
 
     def evaluate_collect_error(self, prompt, data_batch):
         inputs   = [v['input']  for v in data_batch]
@@ -77,48 +66,6 @@ class Improve():
                 })
         # print(f"[DEBUG] evaluate_collect_error: Called with {len(data_batch)} samples")
         return errors_list
-    # def evaluate_collect_error(self, prompt, data_batch):
-    #     """
-    #     For each sample:
-    #      • If target_index == -1: skip (out of top‑20 → LM is “innocent”).
-    #      • Else parse the LLM’s new <ranking>…</ranking>.
-    #      • Compute new_pos (1‑based) vs. baseline_pos (also 1‑based).
-    #      • Flag an error only if parsing failed, target missing, or new_pos > baseline_pos.
-    #     """
-    #     inputs   = [v['input']   for v in data_batch]
-    #     responses = self.request.batch_request(inputs, system=prompt)
-
-    #     errors_list = []
-    #     for v, raw_resp in zip(data_batch, responses):
-    #         # Skip examples where the true item wasn’t even in the top‑20 to begin with
-    #         if v['target_index'] < 0:
-    #             continue
-
-    #         cleaned = clean_llm_output(raw_resp)
-
-    #         # 1) parse out (item_idx, explanation) tuples
-    #         parsed = extract_ranking_and_explanations(cleaned)
-    #         ids = [idx for idx, _ in parsed] if parsed else []
-
-    #         # 2) find the new position (1‑based) of the true item
-    #         baseline_pos = v['target_index'] + 1
-    #         new_pos = ids.index(baseline_pos) + 1 if baseline_pos in ids else None
-
-    #         # 3) flag only if parse failed, missing, or dropped lower
-    #         if not parsed or new_pos is None or new_pos > baseline_pos:
-    #             meta  = build_local_meta(v['input'])
-    #             title = meta.get(baseline_pos, {}).get('title',
-    #                                                    f"item {baseline_pos}")
-
-    #             errors_list.append({
-    #                 'input':        v['input'],
-    #                 'response':     cleaned,
-    #                 'target_index': baseline_pos,
-    #                 'target_title': title,
-    #                 'target_pos':   new_pos
-    #             })
-
-    #     return errors_list
 
 
     def generate_similar_prompt(self, prompt_list):
@@ -174,16 +121,7 @@ class Improve():
             raw_edit = self.request.request(content)
             clean_edit = clean_llm_output(raw_edit)
             edit_prompt_list = extract_edit_prompt(clean_edit)
-            # tmp_prompt = inferring_reasons
-            # content = tmp_prompt.replace("$error_case$", error['input']) 
-            # gradient = self.request.request(user=content, system='')
-
-            # # Refining prompts with reasons
-            # tmp_prompt = refining_prompts
-            # tmp_prompt = tmp_prompt.replace("$error_case$", error['input']) 
-            # content = tmp_prompt.replace("$reasons$", gradient)
-            # edit_prompt = self.request.request(user=content, system='')
-            # edit_prompt_list = extract_edit_prompt(edit_prompt)
+            
 
             # Augumenting prompts
             similar_prompts = self.generate_similar_prompt(edit_prompt_list)
@@ -194,25 +132,6 @@ class Improve():
             
             # add data into wandb Text Table [input, prompt, reason, improved prompt, augumented prompt]
             if table is not None:
-                # for new_index, body in enumerate(edit_prompt_list):
-                #     full_improved = prompt + "\n\n" + body
-                #     full_improved = clean_llm_output(full_improved)
-
-                #     # each improved prompt produced `addition_sample` augmentations
-                #     for mc_index in range(self.config['addition_sample']):
-                #         raw_aug = similar_prompts[
-                #             new_index * self.config['addition_sample'] + mc_index
-                #         ]
-                #         full_aug = prompt + "\n\n" + raw_aug
-                #         full_aug = clean_llm_output(full_aug)
-
-                #         table.add_data(
-                #             error['input'],     # user session
-                #             prompt,             # old prompt
-                #             gradient,           # why it failed
-                #             full_improved,      # improved prompt
-                #             full_aug            # augmented prompt
-                #         )
                 for new_index, body in enumerate(edit_prompt_list):
                     improved = clean_llm_output(body)
                     for mc_index in range(self.config['addition_sample']):
@@ -227,10 +146,6 @@ class Improve():
                             augmented         # *only* the LLM’s variation
                         )
 
-            # if table is not None :
-            #     for new_index, new_prompt in enumerate(edit_prompt_list):
-            #         for mc_index in range(self.config['addition_sample']):
-            #             table.add_data(error['input'], prompt, gradient, new_prompt, similar_prompts[new_index * self.config['addition_sample'] + mc_index])
         # Randomly sampled #num successor candidates per parent prompt
         try:
             sample_candidate_prompts = random.sample(candidate_prompts, self.config['num_candidates'])
