@@ -43,24 +43,7 @@ class Eval():
         
         return tmp
 
-    # def normal_eval(self, prompt):
-    #     for data in tqdm(self.data):
-    #         for _ in range(3):
-    #             response = self.requset.request(user=data['input'], system=prompt)
-    #             result_list = extract_item_list(response, data['target'])
-    #             if not result_list:
-    #                 continue
-    #             elif ((int(result_list[-1])) < self.conf['candidate_size']+1) and (int(result_list[-1]))>0:
-    #                 self.target_rank_list.append(int(result_list[-1]))
-    #                 break
-    #         # self.text_table.add_data(data['input'], data['target'], response)
-    #         if self.text_table is not None:
-    #             self.text_table.add_data(data['input'], data['target'], response)
-
-    #         if (not result_list) or (int(result_list[-1]) >= (self.conf['candidate_size']+1)):
-    #             error = self.record_error(data, response)
-    #             self.error_list.append(error)
-    #             self.target_rank_list.append(self.conf['candidate_size']+1)
+    
     
     def normal_eval_noexp(self, prompt):
         # batch‑size comes from command line flag --bs (default 4)
@@ -110,16 +93,7 @@ class Eval():
                 # Then proceed with parsing
                 rank_expl = extract_ranking_and_explanations(response, data_entry["input"])
                 parsing_method = "primary"
-                # ── 1. parse ranking + explanations from the LLM output ──
-                # First try to parse with special tags
-                # if response.strip().startswith("[") and "generated_text" in response:
-                #     try:
-                #         import ast
-                #         response = ast.literal_eval(response)[0]["generated_text"]
-                #     except:
-                #         pass
-                # response = response.replace("\\n", "\n")
-                # rank_expl = extract_ranking_and_explanations(response)
+                
                 
                 # If tag-based parsing fails, try freeform parsing
                 if not rank_expl or len(rank_expl) != 20:
