@@ -1,0 +1,32 @@
+data_path: './Dataset/'
+dataset: 'Grocery'
+E_2: 2 
+train_num: 50
+
+#Improve parameter
+N_t: 32
+N_e: 16
+N_r: 2
+steps_per_gradient: 1
+addition_sample: 2
+num_candidates: 8
+alpha: 0.8   # weight on accuracy  (NDCG)
+beta:  0.2   # weight on explanation relevance
+
+#Select parameter
+N_o: 5
+E_1: 16 
+gamma: 2 
+N_t: 32
+
+
+
+# Evaluate
+metrics: ["hit","map","ndcg"]
+model: "gpt-4o-mini"
+seed: 999
+candidate_size: 20
+api_base: ''
+api_type: ''
+api_version: '2024-10-21'
+"engine": "gpt-4o-mini"
